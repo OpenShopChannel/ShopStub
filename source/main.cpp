@@ -9,6 +9,7 @@ extern "C" {
     #include "extract.h"
 }
 
+
 static void *xfb = NULL;
 static GXRModeObj *rmode = NULL;
 
@@ -74,16 +75,13 @@ int main(int argc, char **argv) {
     Init_IO();
 
     printf("Open the shop, we said.\n");
+    char zip_path[128] = "fat:/osc-temp/wiilauncher.zip";
+    char extract_path[128] = "fat:/";
 
-    char zippath[128] = "fat:/osc-temp/wiilauncher.zip";
-    char filepath[128] = "apps/wiilauncher/boot.dol";
-    char output_path[128] = "fat:/moment.dol";
-
-    s32 unzip = unzipFile(zippath, filepath, output_path);
-    if (unzip > 0) {
-        printf("Epic fail");
+    if (unzipArchive(zip_path, extract_path) == true) {
+        printf("it worked:tm:");
     } else {
-        printf("success");
+        printf("AAAAAA failure");
     }
 
     returnToMenu();

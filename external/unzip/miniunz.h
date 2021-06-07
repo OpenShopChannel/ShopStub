@@ -17,8 +17,6 @@ int zipInfo(unzFile uf);
 extern int zip_size;
 extern long zip_progress;
 extern long extract_part_size;
-extern bool cancel_extract;
-extern bool hbb_updating;
 extern int unzip_file_counter;
 extern int unzip_file_count;
 extern char no_unzip_list[10][300];
