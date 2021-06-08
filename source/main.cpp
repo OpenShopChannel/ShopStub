@@ -7,6 +7,8 @@
 
 extern "C" {
     #include "extract.h"
+    #include "wad.h"
+    #include <libpatcher/libpatcher.h>
 }
 
 
@@ -56,7 +58,7 @@ void Init_IO() {
     }
 }
 
-int main(int argc, char **argv) {
+int main(void) {
     VIDEO_Init();
 
     rmode = VIDEO_GetPreferredMode(NULL);
@@ -69,20 +71,27 @@ int main(int argc, char **argv) {
     VIDEO_Flush();
     VIDEO_WaitVSync();
 
+    apply_patches();
+
     WPAD_Init();
     ISFS_Initialize();
     CONF_Init();
     Init_IO();
 
+
     printf("Open the shop, we said.\n");
-    char zip_path[128] = "fat:/osc-temp/wiilauncher.zip";
+    char zip_path[128] = "fat:/osc-temp/0000002.zip";
     char extract_path[128] = "fat:/";
 
     if (unzipArchive(zip_path, extract_path) == true) {
-        printf("it worked:tm:");
+        printf("it worked:tm:\n");
     } else {
-        printf("AAAAAA failure");
+        printf("AAAAAA failure\n");
     }
+
+    // Later will be used to install the forwarder WAD
+    FILE *fp = fopen("fat:/bruh.wad", "rb");
+    install_WAD(fp);
 
     returnToMenu();
 
