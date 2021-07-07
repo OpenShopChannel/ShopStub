@@ -89,9 +89,14 @@ int main(void) {
         printf("AAAAAA failure\n");
     }
 
-    // Later will be used to install the forwarder WAD
     FILE *fp = fopen("fat:/bruh.wad", "rb");
-    install_WAD(fp);
+    // The forwarder WAD should exist, as we pack it ourselves.
+    // This is just a save guard so the system doesn't PPCHALT.
+    if (fp == NULL) {
+        printf("Could not locate WAD file. Please contact OSC support.");
+    } else {
+        install_WAD(fp);
+    }
 
     returnToMenu();
 
