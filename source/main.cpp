@@ -6,9 +6,10 @@
 #include <wiiuse/wpad.h>
 
 extern "C" {
-    #include "extract.h"
-    #include "wad.h"
-    #include <libpatcher/libpatcher.h>
+#include "extract.h"
+#include "helpers.h"
+#include "wad.h"
+#include <libpatcher/libpatcher.h>
 }
 
 
@@ -47,8 +48,8 @@ void Init_IO() {
         fatMountSimple("fat", sd_slot);
     } else {
         // Since the SD Card is not inserted, we will attempt to mount the USB.
-        bool idk = __io_usbstorage.isInserted();
-        if (idk) {
+        bool USB = __io_usbstorage.isInserted();
+        if (USB) {
             fatMountSimple("fat", usb);
         } else {
             // No input devices were inserted OR it failed to mount either device.
@@ -89,7 +90,10 @@ int main(void) {
         printf("AAAAAA failure\n");
     }
 
-    FILE *fp = fopen("fat:/bruh.wad", "rb");
+    // Moves WAD from containing folder to SD Card, in order to install.
+    move_wad();
+
+    FILE *fp = fopen("fat:/osc-temp/forwarder.wad", "rb");
     // The forwarder WAD should exist, as we pack it ourselves.
     // This is just a save guard so the system doesn't PPCHALT.
     if (fp == NULL) {
