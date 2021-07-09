@@ -8,12 +8,20 @@ static fstats stats ATTRIBUTE_ALIGN(32);
 #define ISFS_ENOENT -105
 
 
-// As we cannot install a WAD directly from the NAND via ISFS, we must move the
-// forwarder WAD from it's containing folder to the SD Card.
-void move_wad() {
-    FILE *fp = fopen("fat:/osc-temp/forwarder.wad", "w");
 
-    s32 fd = ISFS_Open("/title/idk.wad", ISFS_OPEN_READ);
+// As we cannot install a WAD nor unzip an archive directly from the NAND via ISFS, we must move the
+// forwarder WAD and zip from it's containing folder to the SD Card.
+int move_files(const char *in_path, const char *out_path) {
+    char path [45];
+    char sd_path [27];
+
+    sprintf(path, "/title/00010001/46454f4a/content/%s", in_path);
+    sprintf(sd_path, "fat:/osc-temp/%s", out_path);
+
+    FILE *fp = fopen(sd_path, "w");
+
+    // TODO: Change placeholder path
+    s32 fd = ISFS_Open(path, ISFS_OPEN_READ);
     if (fd < 0) {
         printf("ISFS_GetFile: unable to open file (error %d)\n", fd);
     }
@@ -35,7 +43,6 @@ void move_wad() {
         }
 
         buf = aligned_alloc(32, aligned_length);
-        printf("%d", aligned_length);
 
         if (buf != NULL) {
             s32 tmp_size = ISFS_Read(fd, buf, length);
@@ -44,6 +51,7 @@ void move_wad() {
                 // Now that the prerequistes are out of the way, write the WAD
                 // to the SD Card.
                 fwrite(buf, 1, tmp_size, fp);
+                free(buf);
                 fclose(fp);
             } else {
                 // If positive, the file could not be fully read.
@@ -67,6 +75,7 @@ void move_wad() {
     } else {
         printf("ISFS_GetFile: unable to retrieve file stats (error %d)\n", ret);
     }
-    free(buf);
     ISFS_Close(fd);
+
+    return 0;
 }

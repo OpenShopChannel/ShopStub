@@ -10,6 +10,8 @@ extern "C" {
 #include "helpers.h"
 #include "wad.h"
 #include <libpatcher/libpatcher.h>
+#include "unzip/unzip.h"
+#include "unzip/miniunz.h"
 }
 
 
@@ -81,17 +83,23 @@ int main(void) {
 
 
     printf("Open the shop, we said.\n");
-    char zip_path[128] = "fat:/osc-temp/0000002.zip";
+    char zip_path[128] = "fat:/osc-temp/hbc-app.zip";
     char extract_path[128] = "fat:/";
+
+    makedir("fat:/osc-temp")
+
+    // Moves WAD from containing folder to SD Card, in order to install.
+    move_files("00000003.app", "forwarder.wad");
+
+    // Moves zip from containing folder to SD Card, in order to extract.
+    move_files("00000004.app", "hbc-app.zip");
+
 
     if (unzipArchive(zip_path, extract_path) == true) {
         printf("it worked:tm:\n");
     } else {
         printf("AAAAAA failure\n");
     }
-
-    // Moves WAD from containing folder to SD Card, in order to install.
-    move_wad();
 
     FILE *fp = fopen("fat:/osc-temp/forwarder.wad", "rb");
     // The forwarder WAD should exist, as we pack it ourselves.
