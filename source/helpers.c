@@ -24,6 +24,7 @@ int move_files(const char *in_path, const char *out_path) {
     s32 fd = ISFS_Open(path, ISFS_OPEN_READ);
     if (fd < 0) {
         printf("ISFS_GetFile: unable to open file (error %d)\n", fd);
+        return 1;
     }
 
     // From WiiLink24 Set Personal Data Channel - helpers.c
@@ -61,19 +62,23 @@ int move_files(const char *in_path, const char *out_path) {
                     printf("ISFS_GetFile: only able to read %d out of "
                            "%d bytes!\n",
                            tmp_size, length);
+                    return 1;
                 } else if (tmp_size == ISFS_ENOENT) {
                     // We ignore logging errors about files that do not exist.
                 } else {
                     printf("ISFS_GetFile: ISFS_Open failed! (error %d)\n",
                            tmp_size);
+                    return 1;
                 }
                 free(buf);
             }
         } else {
             printf("ISFS_GetFile: failed to allocate buffer!\n");
+            return 1;
         }
     } else {
         printf("ISFS_GetFile: unable to retrieve file stats (error %d)\n", ret);
+        return 1;
     }
     ISFS_Close(fd);
 

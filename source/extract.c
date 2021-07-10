@@ -14,7 +14,6 @@ bool unzipArchive(char * zipfilepath, char * unzipfolderpath) {
         printf("Cannot open %s, aborting\n",zipfilepath);
         return false;
     }
-    //printf("%s opened\n",zipfilepath);
 
     if (chdir(unzipfolderpath)) { // can't access dir
         makedir(unzipfolderpath); // attempt to make dir
