@@ -112,7 +112,6 @@ static int do_extract_currentfile(unzFile uf,
 
     if ((*filename_withoutpath) == '\0') {
         if ((*popt_extract_without_path) == 0) {
-            printf("creating directory: %s\n", filename_inzip);
             mymkdir(filename_inzip);
         }
     } else {

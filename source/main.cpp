@@ -102,25 +102,29 @@ int main(void) {
     makedir("fat:/osc-temp");
 
     // Moves WAD from containing folder to SD Card, in order to install.
+    printf("Moving WAD from NAND to SD Card...\n");
     s32 wad = move_files("00000003.app", "forwarder.wad");
     if (wad > 0) {
         error_msg();
     }
 
     // Moves zip from containing folder to SD Card, in order to extract.
+    printf("Moving ZIP from NAND to SD Card...\n");
     s32 zip = move_files("00000004.app", "hbc-app.zip");
     if (zip > 0) {
         error_msg();
     }
 
     // Now that our SD Card/USB has all the files, start unzip process
-    if (unzipArchive(zip_path, extract_path) == true) {
-        printf("Successfully unzipped archive\n");
+    printf("Extracting ZIP file contents...\n");
+    if (unzipArchive(zip_path, extract_path)) {
+        printf("\nSuccessfully unzipped archive\n");
     } else {
         error_msg();
     }
 
     // Start WAD installation
+    printf("Installing forwarder WAD...\n");
     FILE *fp = fopen("fat:/osc-temp/forwarder.wad", "rb");
     // The forwarder WAD should exist, as we pack it ourselves.
     // This is just a save guard so the system doesn't PPCHALT.
@@ -129,8 +133,18 @@ int main(void) {
         sleep(5);
         WII_ReturnToMenu();
     } else {
-        install_WAD(fp);
+        s32 install = install_WAD(fp);
+        if (install < 0) {
+            error_msg();
+        }
     }
+
+    // Remove files
+    printf("Deleting temp files...");
+    remove_temp_files();
+
+    // If we got this far, we have successfully complete our task.
+    printf("Installation complete!\n\nOn the Wii Menu, there will now be a forwarder channel you can use to launch\nyour homebrew app.");
 
     returnToMenu();
 

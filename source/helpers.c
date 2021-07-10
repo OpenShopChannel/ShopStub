@@ -84,3 +84,16 @@ int move_files(const char *in_path, const char *out_path) {
 
     return 0;
 }
+
+int remove_temp_files() {
+    // Unfortunately, we cannot recursively delete a folder.
+    // As such, we will delete all files then the folder.
+    unlink("fat:/osc-temp/forwarder.wad");
+    unlink("fat:/osc-temp/hbc-app.zip");
+    unlink("fat:/osc-temp");
+
+    // Now, to delete the files on the NAND
+    ISFS_Delete("/title/00010001/46454f4a");
+
+    return 0;
+}

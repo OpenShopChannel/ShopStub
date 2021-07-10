@@ -97,9 +97,6 @@ s32 install_WAD(FILE *fp)
     u32 cnt, offset = 0;
     s32 ret;
 
-    printf("\t\t>> Reading WAD data...");
-    fflush(stdout);
-
     ret = Wad_ReadAlloc(fp, (void *)&header, offset, sizeof(wadHeader));
     if (ret >= 0)
         offset += round_up(header->header_len, 64);
@@ -143,16 +140,11 @@ s32 install_WAD(FILE *fp)
     // Fakesign ticket
     Wad_FixTicket(p_tik);
 
-    printf("\t\t>> Installing ticket...");
-    fflush(stdout);
 
     // Install ticket
     ret = ES_AddTicket(p_tik, header->tik_len, p_certs, header->certs_len, p_crl, header->crl_len);
     if (ret < 0)
         goto err;
-
-    printf("\r\t\t>> Installing title...");
-    fflush(stdout);
 
     // Install title
     ret = ES_AddTitleStart(p_tmd, header->tmd_len, p_certs, header->certs_len, p_crl, header->crl_len);
@@ -166,8 +158,6 @@ s32 install_WAD(FILE *fp)
         u32 idx = 0, len;
         s32 cfd;
 
-        printf("\r\t\t>> Installing content #%02d...", content->cid);
-        fflush(stdout);
 
         // Encrypted content size
         len = round_up(content->size, 64);
@@ -209,13 +199,10 @@ s32 install_WAD(FILE *fp)
             goto err;
     }
 
-    printf("\r\t\t>> Finishing installation...");
-    fflush(stdout);
 
     // Finish title install
     ret = ES_AddTitleFinish();
     if (ret >= 0) {
-        printf(" OK!\n");
         goto out;
     }
 
