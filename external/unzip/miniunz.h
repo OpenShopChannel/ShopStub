@@ -2,6 +2,8 @@
 #ifndef _miniunz_H
 #define _miniunz_H
 
+#include "unzip.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
