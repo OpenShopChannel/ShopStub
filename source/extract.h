@@ -1,1 +1,1 @@
-bool unzipArchive(char * zipfilepath, char * unzipfolderpath);
+bool unzipArchive(char *zipfilepath, char *unzipfolderpath);

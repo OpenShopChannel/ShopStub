@@ -1,16 +1,17 @@
-// NOTE: Some of this code was taken from YAWMM, not to be confused with Some-YAWMM-Mod.
+// NOTE: Some of this code was taken from YAWMM, not to be confused with
+// Some-YAWMM-Mod.
+#include <limits.h>
+#include <malloc.h>
+#include <ogc/pad.h>
+#include <ogcsys.h>
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
-#include <ogcsys.h>
-#include <ogc/pad.h>
-#include <limits.h>
 
 #include "title.h"
 
-#define TITLE_ID(x,y)		(((u64)(x) << 32) | (y))
-#define BLOCK_SIZE	1024
-#define round_up(x,n)	(-(-(x) & -(n)))
+#define TITLE_ID(x, y) (((u64)(x) << 32) | (y))
+#define BLOCK_SIZE 1024
+#define round_up(x, n) (-(-(x) & -(n)))
 
 // WAD Header Struct
 typedef struct {
@@ -34,8 +35,7 @@ typedef struct {
 // Set WAD buffer
 static u8 wadBuffer[BLOCK_SIZE] ATTRIBUTE_ALIGN(32);
 
-s32 Wad_ReadFile(FILE *fp, void *outbuf, u32 offset, u32 len)
-{
+s32 Wad_ReadFile(FILE *fp, void *outbuf, u32 offset, u32 len) {
     s32 ret;
 
     // Move file pointer to offset
@@ -49,10 +49,9 @@ s32 Wad_ReadFile(FILE *fp, void *outbuf, u32 offset, u32 len)
     return 0;
 }
 
-s32 Wad_ReadAlloc(FILE *fp, void **outbuf, u32 offset, u32 len)
-{
+s32 Wad_ReadAlloc(FILE *fp, void **outbuf, u32 offset, u32 len) {
     void *buffer = NULL;
-    s32   ret;
+    s32 ret;
 
     // Allocate memory
     buffer = memalign(32, len);
@@ -72,8 +71,7 @@ s32 Wad_ReadAlloc(FILE *fp, void **outbuf, u32 offset, u32 len)
     return 0;
 }
 
-void Wad_FixTicket(signed_blob *p_tik)
-{
+void Wad_FixTicket(signed_blob *p_tik) {
     u8 *data = (u8 *)p_tik;
     u8 *common_key = data + 0x1F1;
 
@@ -85,14 +83,12 @@ void Wad_FixTicket(signed_blob *p_tik)
     Title_FakesignTik(p_tik);
 }
 
-
 // The install WAD function in its entirety
-s32 install_WAD(FILE *fp)
-{
-    wadHeader *header  = NULL;
+s32 install_WAD(FILE *fp) {
+    wadHeader *header = NULL;
     signed_blob *p_certs = NULL, *p_crl = NULL, *p_tik = NULL, *p_tmd = NULL;
 
-    tmd *tmd_data  = NULL;
+    tmd *tmd_data = NULL;
 
     u32 cnt, offset = 0;
     s32 ret;
@@ -102,7 +98,6 @@ s32 install_WAD(FILE *fp)
         offset += round_up(header->header_len, 64);
     else
         goto err;
-
 
     // WAD certificates
     ret = Wad_ReadAlloc(fp, (void *)&p_certs, offset, header->certs_len);
@@ -140,14 +135,15 @@ s32 install_WAD(FILE *fp)
     // Fakesign ticket
     Wad_FixTicket(p_tik);
 
-
     // Install ticket
-    ret = ES_AddTicket(p_tik, header->tik_len, p_certs, header->certs_len, p_crl, header->crl_len);
+    ret = ES_AddTicket(p_tik, header->tik_len, p_certs, header->certs_len,
+                       p_crl, header->crl_len);
     if (ret < 0)
         goto err;
 
     // Install title
-    ret = ES_AddTitleStart(p_tmd, header->tmd_len, p_certs, header->certs_len, p_crl, header->crl_len);
+    ret = ES_AddTitleStart(p_tmd, header->tmd_len, p_certs, header->certs_len,
+                           p_crl, header->crl_len);
     if (ret < 0)
         goto err;
 
@@ -157,7 +153,6 @@ s32 install_WAD(FILE *fp)
 
         u32 idx = 0, len;
         s32 cfd;
-
 
         // Encrypted content size
         len = round_up(content->size, 64);
@@ -189,7 +184,7 @@ s32 install_WAD(FILE *fp)
                 goto err;
 
             // Increase variables
-            idx    += size;
+            idx += size;
             offset += size;
         }
 
@@ -199,20 +194,19 @@ s32 install_WAD(FILE *fp)
             goto err;
     }
 
-
     // Finish title install
     ret = ES_AddTitleFinish();
     if (ret >= 0) {
         goto out;
     }
 
-    err:
+err:
     printf(" ERROR! (ret = %d)\n", ret);
 
     // Cancel install
     ES_AddTitleCancel();
 
-    out:
+out:
     // Free memory
     if (header)
         free(header);

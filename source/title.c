@@ -1,13 +1,12 @@
-// NOTE: Some of this code was taken from YAWMM, not to be confused with Some-YAWMM-Mod.
-#include <string.h>
-#include <ogcsys.h>
+// NOTE: Some of this code was taken from YAWMM, not to be confused with
+// Some-YAWMM-Mod.
 #include <limits.h>
+#include <ogcsys.h>
+#include <string.h>
 
 #include "sha1/sha1.h"
 
-
-s32 Title_ZeroSignature(signed_blob *p_sig)
-{
+s32 Title_ZeroSignature(signed_blob *p_sig) {
     u8 *ptr = (u8 *)p_sig;
 
     /* Fill signature with zeroes */
@@ -16,8 +15,7 @@ s32 Title_ZeroSignature(signed_blob *p_sig)
     return 0;
 }
 
-s32 Title_FakesignTik(signed_blob *p_tik)
-{
+s32 Title_FakesignTik(signed_blob *p_tik) {
     tik *tik_data = NULL;
     u16 fill;
 

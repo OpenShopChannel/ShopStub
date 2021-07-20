@@ -7,13 +7,12 @@ static fstats stats ATTRIBUTE_ALIGN(32);
 #define ISFS_EEXIST -105
 #define ISFS_ENOENT -105
 
-
-
-// As we cannot install a WAD nor unzip an archive directly from the NAND via ISFS, we must move the
-// forwarder WAD and zip from it's containing folder to the SD Card.
+// As we cannot install a WAD nor unzip an archive directly from the NAND via
+// ISFS, we must move the forwarder WAD and zip from it's containing folder to
+// the SD Card.
 int move_files(const char *in_path, const char *out_path) {
-    char path [45];
-    char sd_path [27];
+    char path[45];
+    char sd_path[27];
 
     sprintf(path, "/title/00010001/46454f4a/content/%s", in_path);
     sprintf(sd_path, "fat:/osc-temp/%s", out_path);

@@ -8,18 +8,17 @@
 extern "C" {
 #include "extract.h"
 #include "helpers.h"
+#include "unzip/miniunz.h"
+#include "unzip/unzip.h"
 #include "wad.h"
 #include <libpatcher/libpatcher.h>
-#include "unzip/unzip.h"
-#include "unzip/miniunz.h"
 }
-
 
 static void *xfb = NULL;
 static GXRModeObj *rmode = NULL;
 
 const DISC_INTERFACE *sd_slot = &__io_wiisd;
-const DISC_INTERFACE* usb = &__io_usbstorage;
+const DISC_INTERFACE *usb = &__io_usbstorage;
 
 void returnToMenu() {
     while (1) {
@@ -61,7 +60,8 @@ void Init_IO() {
         if (USB) {
             fatMountSimple("fat", usb);
         } else {
-            // No input devices were inserted OR it failed to mount either device.
+            // No input devices were inserted OR it failed to mount either
+            // device.
             printf("Please insert either an SD Card or USB.\n");
             returnToMenu();
         }
@@ -93,7 +93,6 @@ int main(void) {
     ISFS_Initialize();
     CONF_Init();
     Init_IO();
-
 
     printf("Open the shop, we said.\n");
     char zip_path[128] = "fat:/osc-temp/hbc-app.zip";
@@ -144,7 +143,8 @@ int main(void) {
     remove_temp_files();
 
     // If we got this far, we have successfully complete our task.
-    printf("Installation complete!\n\nOn the Wii Menu, there will now be a forwarder channel you can use to launch\nyour homebrew app.");
+    printf("Installation complete!\n\nOn the Wii Menu, there will now be a "
+           "forwarder channel you can use to launch\nyour homebrew app.");
 
     returnToMenu();
 
