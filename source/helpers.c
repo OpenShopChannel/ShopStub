@@ -93,7 +93,7 @@ int remove_temp_files() {
 
     // Now, to delete the files on the NAND
     ISFS_Delete("/title/00010001/46454f4a");
-    ISFS_Delete("/ticket/00010001/46454f4a");
+    ISFS_Delete("/ticket/00010001/46454f4a.tik");
 
     return 0;
 }
